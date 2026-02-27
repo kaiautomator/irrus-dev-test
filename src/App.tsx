@@ -1,14 +1,18 @@
+import { useState } from 'react'
 import {
   FluentProvider,
   webDarkTheme,
+  webLightTheme,
   Card,
   CardHeader,
   Text,
   Badge,
   Divider,
+  Switch,
   makeStyles,
   tokens,
 } from '@fluentui/react-components'
+import { WeatherMoon20Regular, WeatherSunny20Regular } from '@fluentui/react-icons'
 
 const useStyles = makeStyles({
   root: {
@@ -17,20 +21,32 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: tokens.colorNeutralBackground1,
+    transition: 'background-color 0.2s',
   },
   card: {
     width: '400px',
     padding: tokens.spacingVerticalXXL,
   },
+  cardHeaderRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
   logo: {
     fontSize: tokens.fontSizeHero700,
     fontWeight: tokens.fontWeightBold,
     color: tokens.colorBrandForeground1,
-    display: 'block',
-    marginBottom: tokens.spacingVerticalL,
+  },
+  themeToggle: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacingHorizontalXS,
+    color: tokens.colorNeutralForeground3,
   },
   title: {
     display: 'block',
+    marginTop: tokens.spacingVerticalL,
     marginBottom: tokens.spacingVerticalS,
   },
   subtitle: {
@@ -52,7 +68,7 @@ const useStyles = makeStyles({
   },
 })
 
-function AppContent() {
+function AppContent({ darkMode, onToggle }: { darkMode: boolean; onToggle: () => void }) {
   const styles = useStyles()
 
   return (
@@ -60,11 +76,24 @@ function AppContent() {
       <Card className={styles.card}>
         <CardHeader
           header={
-            <Text className={styles.logo} size={800} weight="bold">
-              Irrus
-            </Text>
+            <div className={styles.cardHeaderRow}>
+              <Text className={styles.logo} size={800} weight="bold">
+                Irrus
+              </Text>
+              <div className={styles.themeToggle}>
+                <WeatherSunny20Regular />
+                <Switch
+                  checked={darkMode}
+                  onChange={onToggle}
+                  label=""
+                  aria-label="Dark mode toggle"
+                />
+                <WeatherMoon20Regular />
+              </div>
+            </div>
           }
         />
+
         <Text className={styles.title} size={600} weight="semibold" as="h1">
           Deployment Test
         </Text>
@@ -95,9 +124,11 @@ function AppContent() {
 }
 
 function App() {
+  const [darkMode, setDarkMode] = useState(true)
+
   return (
-    <FluentProvider theme={webDarkTheme}>
-      <AppContent />
+    <FluentProvider theme={darkMode ? webDarkTheme : webLightTheme}>
+      <AppContent darkMode={darkMode} onToggle={() => setDarkMode(d => !d)} />
     </FluentProvider>
   )
 }
